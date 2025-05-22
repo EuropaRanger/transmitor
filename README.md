@@ -1,25 +1,19 @@
 # transmitor
-qt.qpa.plugin: Could not find the Qt platform plugin "qt5ct" in ""
-This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
+# 删除之前创建的无效配置
+rm -rf ~/.config/qt5ct/
 
-Available platform plugins are: eglfs, linuxfb, minimal, minimalegl, offscreen, vnc, xcb.
+# 强制使用xcb平台（确保大写XCB）
+QT_QPA_PLATFORM=xcb colmap gui
 
-*** Aborted at 1747908970 (unix time) try "date -d @1747908970" if you are using GNU date ***
-PC: @     0x7fa1c829500b gsignal
-*** SIGABRT (@0x3ea00002b9d) received by PID 11165 (TID 0x7fa1c3abd900) from PID 11165; stack trace: ***
-    @     0x7fa1c9ed4631 (unknown)
-    @     0x7fa1c9417420 (unknown)
-    @     0x7fa1c829500b gsignal
-    @     0x7fa1c8274859 abort
-    @     0x7fa1c88aaaad QMessageLogger::fatal()
-    @     0x7fa1c8e8c7ae QGuiApplicationPrivate::createPlatformIntegration()
-    @     0x7fa1c8e8d708 QGuiApplicationPrivate::createEventDispatcher()
-    @     0x7fa1c8ab1f55 QCoreApplicationPrivate::init()
-    @     0x7fa1c8e8f543 QGuiApplicationPrivate::init()
-    @     0x7fa1c95993bd QApplicationPrivate::init()
-    @     0x55f4d27d9dcc RunGraphicalUserInterface()
-    @     0x55f4d27c4eaf main
-    @     0x7fa1c8276083 __libc_start_main
-    @     0x55f4d27c8f6e _start
-已放弃 (核心已转储)
+# 创建新的环境变量配置
+echo -e "export QT_QPA_PLATFORM=xcb\nexport __GLX_VENDOR_LIBRARY_NAME=nvidia" >> ~/.bashrc
+source ~/.bashrc
 
+# 运行COLMAP
+colmap gui
+
+# 检查插件是否存在
+ls /usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/  # 应看到libqxcb.so
+
+# 如果缺失，重新安装Qt插件
+sudo apt install --reinstall qtx11extras5 libqt5x11extras5-dev
